@@ -47,7 +47,7 @@ class CurveDrawer {
 		gl.bindBuffer( gl.ARRAY_BUFFER, this.buffer );
 		gl.vertexAttribPointer( this.t, 1, gl.FLOAT, false, 0, 0 );
 		gl.enableVertexAttribArray( this.t );
-		gl.drawArrays( gl.POINTS, 0, this.steps );
+		gl.drawArrays( gl.LINE_STRIP, 0, this.steps );
 	}
 }
 
@@ -75,7 +75,6 @@ var curvesVS = `
 		vec2 vertexPos = lerp(cp4, cp5, t);
 		
 		gl_Position = mvp * vec4(vertexPos,0,1);
-		gl_PointSize = 5.0; 
 	}
 `;
 
@@ -84,6 +83,6 @@ var curvesFS = `
 	precision mediump float;
 	void main()
 	{
-		gl_FragColor = vec4(0,1,0,1);
+		gl_FragColor = vec4(0,0.5,0,1);
 	}
 `;
