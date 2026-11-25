@@ -22,10 +22,13 @@ function keyDownTextField(e) {
 function recomputeImage()
 {
 	var layers = document.getElementById('layers');
-	if ( layers.children.length == 0 ) return;
+	var canvas = document.getElementById('canvas');
+	var context = canvas.getContext('2d');
+	if ( layers.children.length == 0 ) {
+		context.clearRect( 0, 0, canvas.width, canvas.height );
+		return;
+	}
 	if ( layers.lastChild.image ) {
-		var canvas = document.getElementById('canvas');
-		var context = canvas.getContext('2d');
 		canvas.width  = layers.lastChild.image.width;
 		canvas.height = layers.lastChild.image.height;
 		var image = new ImageData( layers.lastChild.image.data.slice(), 

@@ -34,13 +34,21 @@ function composite( bgImg, fgImg, fgOpac, fgPos )
 			//get the index of the current pixel in the foreground image data array
 			const fgIndex = (y * fgImgWidth + x) * 4;
 			
-			//calculate the alpha value of the foreground image
-			const alphaFg = (fgData[fgIndex+3]/255.0) * fgOpac;
-			
-			//set bg image colors
-			bgData[bgIndex] = bgImg.data[bgIndex] * (1 - alphaFg) + fgData[fgIndex] * alphaFg;
-			bgData[bgIndex+1] = bgData[bgIndex+1] * (1 - alphaFg) + fgData[fgIndex+1] * alphaFg;
-			bgData[bgIndex+2] = bgData[bgIndex+2] * (1 - alphaFg) + fgData[fgIndex+2] * alphaFg;
+			const foregroundAlpha = fgData[fgIndex + 3] / 255 * fgOpac;
+			if (foregroundAlpha === 0) continue;
+
+			const backgroundAlpha = bgData[bgIndex + 3] / 255;
+			const backgroundWeight = backgroundAlpha * (1 - foregroundAlpha);
+			const outputAlpha = foregroundAlpha + backgroundWeight;
+
+			// ImageData stores RGB channels without premultiplying by alpha.
+			for (let channel = 0; channel < 3; channel += 1) {
+				bgData[bgIndex + channel] = (
+					fgData[fgIndex + channel] * foregroundAlpha +
+					bgData[bgIndex + channel] * backgroundWeight
+				) / outputAlpha;
+			}
+			bgData[bgIndex + 3] = outputAlpha * 255;
 		}
 	}
 }
